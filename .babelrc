@@ -1,0 +1,8 @@
+{
+    "plugins": [
+        ["./babel-plugins/vuex-compile.js",{
+                // pass args to the custom plugin
+            }
+        ]
+    ]
+}
