@@ -1,1 +1,3 @@
-{};
+const machine = {
+    testKey: 'testVal'
+};
