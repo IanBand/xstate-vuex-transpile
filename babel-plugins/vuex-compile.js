@@ -59,6 +59,9 @@ module.exports = function transformXstateToVuex({types: t}) {
                     )
                 ));
 
+                // TODO: either build a faux interpreter https://stately.ai/blog/you-dont-need-a-library-for-state-machines#using-objects
+                // or just use the actual interpreter
+
 
                 // https://babeljs.io/docs/en/babel-types#objectexpression
                 let vuexModule = t.objectExpression(
