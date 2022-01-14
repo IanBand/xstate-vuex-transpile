@@ -1,6 +1,13 @@
-const machine = {
-  state: {},
+const xStateMachine = {
+  state: {
+    curState: "inactive"
+  },
   mutations: {},
-  actions: {},
+  actions: {
+    TOGGLE({
+      commit: commit
+    }) {}
+
+  },
   getters: {}
 };

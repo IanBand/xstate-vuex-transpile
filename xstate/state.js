@@ -1,4 +1,4 @@
-const machine = {
+const xStateMachine = {
     id: "toggle",
     initial: "inactive",
     states: {
@@ -9,4 +9,5 @@ const machine = {
         on: { TOGGLE: "inactive" },
       },
     },
-  };
+  }
+  
