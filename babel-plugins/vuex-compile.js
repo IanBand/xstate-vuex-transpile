@@ -1,10 +1,12 @@
 module.exports = function transformXstateToVuex({types: t}) {
     return {
         visitor: {
-            // https://babeljs.io/docs/en/babel-types
-
-            FunctionDeclaration(path,state){
+            // https://babeljs.io/docs/en/babel-types - why is this so hard to find on google 
+            /*FunctionDeclaration(path,state){
                 console.log(path.node.params[0].properties[0]);
+            },*/
+            ExpressionStatement(path, state){
+                console.log(path.node);
             },
             VariableDeclaration(path, state){
 
@@ -25,7 +27,13 @@ module.exports = function transformXstateToVuex({types: t}) {
                         t.identifier("curState"),
                         t.stringLiteral(xInitState)
                     ),
+                    t.objectProperty(
+                        t.identifier("stateTransitionLookup"),
+                        // copy transition lookup table, TODO: xstate actions may need to be processed
+                        xProps.find(n => n.key.name == 'states').value 
+                    )
                 ]);
+
 
                 /*
                 put additional state variables (counters, ect) into the vuex state
@@ -61,6 +69,27 @@ module.exports = function transformXstateToVuex({types: t}) {
 
                 // TODO: either build a faux interpreter https://stately.ai/blog/you-dont-need-a-library-for-state-machines#using-objects
                 // or just use the actual interpreter
+                /*
+                * NEXT_XSTATE(vuexState, action){
+                *   vuexState.curState = vuexState.stateTransitionLookup[vuexState.curState]?.on[action] ?? vuexState.curState;
+                * }
+                */
+               let vuexMutations = t.objectExpression([
+                   t.objectMethod(
+                       "method",
+                       t.identifier("NEXT_STATE"),
+                       [t.identifier("vuexState"), t.identifier("action")],
+                       t.blockStatement([
+                           t.expressionStatement(
+                               t.assignmentExpression(
+                                    "=",
+                                    t.memberExpression(t.identifier("vuexState"), t.identifier("curState")),
+                                    t.nullLiteral()
+                                )
+                           )
+                        ])
+                   )
+               ])
 
 
                 // https://babeljs.io/docs/en/babel-types#objectexpression
@@ -73,7 +102,7 @@ module.exports = function transformXstateToVuex({types: t}) {
                         ),
                         t.objectProperty(
                             t.identifier("mutations"),
-                            t.objectExpression([])
+                            vuexMutations
                         ),
                         t.objectProperty(
                             t.identifier("actions"),

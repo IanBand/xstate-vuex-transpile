@@ -1,13 +1,12 @@
 const xStateMachine = {
-    id: "toggle",
-    initial: "inactive",
-    states: {
-      inactive: {
-        on: { TOGGLE: "active" },
-      },
-      active: {
-        on: { TOGGLE: "inactive" },
-      },
+  id: "toggle",
+  initial: "active",
+  states: {
+    inactive: {
+      on: { TOGGLE: "active" },
     },
-  }
-  
+    active: {
+      on: { TOGGLE: "inactive" },
+    },
+  },
+}

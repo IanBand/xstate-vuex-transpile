@@ -1,8 +1,25 @@
 const xStateMachine = {
   state: {
-    curState: "inactive"
+    curState: "active",
+    stateTransitionLookup: {
+      inactive: {
+        on: {
+          TOGGLE: "active"
+        }
+      },
+      active: {
+        on: {
+          TOGGLE: "inactive"
+        }
+      }
+    }
   },
-  mutations: {},
+  mutations: {
+    NEXT_STATE(vuexState, action) {
+      vuexState.curState = null;
+    }
+
+  },
   actions: {
     TOGGLE({
       commit: commit
