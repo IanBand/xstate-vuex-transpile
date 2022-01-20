@@ -1,27 +1,32 @@
-const xStateMachine = {
+const lightMachine = {
   state: {
-    curState: "active",
+    curState: "green",
     stateTransitionLookup: {
-      inactive: {
+      green: {
         on: {
-          TOGGLE: "active"
+          TIMER: 'yellow'
         }
       },
-      active: {
+      yellow: {
         on: {
-          TOGGLE: "inactive"
+          TIMER: 'red'
+        }
+      },
+      red: {
+        on: {
+          TIMER: 'green'
         }
       }
     }
   },
   mutations: {
     NEXT_STATE(vuexState, action) {
-      vuexState.curState = null;
+      vuexState.curState = vuexState.stateTransitionLookup[vuexState.curState]?.on[action] ?? vuexState.curState;
     }
 
   },
   actions: {
-    TOGGLE({
+    TIMER({
       commit: commit
     }) {}
 

@@ -1,12 +1,21 @@
-const xStateMachine = {
-  id: "toggle",
-  initial: "active",
+const lightMachine = {
+  id: 'light',
+  initial: 'green',
   states: {
-    inactive: {
-      on: { TOGGLE: "active" },
+    green: {
+      on: {
+        TIMER: 'yellow'
+      }
     },
-    active: {
-      on: { TOGGLE: "inactive" },
+    yellow: {
+      on: {
+        TIMER: 'red'
+      }
     },
-  },
-}
+    red: {
+      on: {
+        TIMER: 'green'
+      }
+    }
+  }
+};

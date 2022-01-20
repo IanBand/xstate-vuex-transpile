@@ -2,14 +2,8 @@ module.exports = function transformXstateToVuex({types: t}) {
     return {
         visitor: {
             // https://babeljs.io/docs/en/babel-types - why is this so hard to find on google 
-            /*FunctionDeclaration(path,state){
-                console.log(path.node.params[0].properties[0]);
-            },*/
-            ExpressionStatement(path, state){
-                console.log(path.node);
-            },
+            // https://astexplorer.net/ - SO USEFUL 
             VariableDeclaration(path, state){
-
                 // could check for a specific variable name
                 // console.log(path.node.declarations[0].id); 
 
@@ -37,11 +31,7 @@ module.exports = function transformXstateToVuex({types: t}) {
 
                 /*
                 put additional state variables (counters, ect) into the vuex state
-                for(...){
-                    vuexState.push(
-
-                    )
-                }
+                do it with a map
                 */
 
                 let xActions = [
@@ -67,35 +57,64 @@ module.exports = function transformXstateToVuex({types: t}) {
                     )
                 ));
 
-                // TODO: either build a faux interpreter https://stately.ai/blog/you-dont-need-a-library-for-state-machines#using-objects
-                // or just use the actual interpreter
+                // a faux xstate engine based on https://stately.ai/blog/you-dont-need-a-library-for-state-machines#using-objects
+                // TODO: just use the actual interpreter?
                 /*
                 * NEXT_XSTATE(vuexState, action){
                 *   vuexState.curState = vuexState.stateTransitionLookup[vuexState.curState]?.on[action] ?? vuexState.curState;
+                *   TODO: apply effect based on state transition (XState calls these actions)
+                *   TODO: put this mess in a helper function to make code more readable?
                 * }
                 */
-               let vuexMutations = t.objectExpression([
-                   t.objectMethod(
-                       "method",
-                       t.identifier("NEXT_STATE"),
-                       [t.identifier("vuexState"), t.identifier("action")],
-                       t.blockStatement([
-                           t.expressionStatement(
-                               t.assignmentExpression(
+                let vuexMutations = t.objectExpression([
+                    t.objectMethod(
+                        "method",
+                        t.identifier("NEXT_STATE"),
+                        [t.identifier("vuexState"), t.identifier("action")],
+                        t.blockStatement([
+                            t.expressionStatement(
+                                t.assignmentExpression(
                                     "=",
-                                    t.memberExpression(t.identifier("vuexState"), t.identifier("curState")),
-                                    t.nullLiteral()
+                                    t.memberExpression(
+                                        t.identifier("vuexState"), 
+                                        t.identifier("curState")
+                                    ),
+                                    t.logicalExpression(
+                                        "??", 
+                                        t.optionalMemberExpression(
+                                            t.optionalMemberExpression(
+                                                t.memberExpression(
+                                                    t.memberExpression(
+                                                        t.identifier("vuexState"),
+                                                        t.identifier("stateTransitionLookup")
+                                                    ),
+                                                    t.memberExpression(
+                                                        t.identifier("vuexState"),
+                                                        t.identifier("curState")
+                                                    ), 
+                                                    true
+                                                ),
+                                                t.identifier("on"),
+                                                false,
+                                                true
+                                            ),
+                                            t.identifier("action"),
+                                            true,
+                                            false
+                                        ),
+                                        t.memberExpression( // same as line 78
+                                            t.identifier("vuexState"), 
+                                            t.identifier("curState")
+                                        ) 
+                                    )
                                 )
-                           )
+                            )
                         ])
-                   )
-               ])
+                    )
+                ])
 
-
-                // https://babeljs.io/docs/en/babel-types#objectexpression
                 let vuexModule = t.objectExpression(
                     [
-                        // t.objectProperty(key, value, computed, shorthand, decorators);
                         t.objectProperty(
                             t.identifier("state"),
                             vuexState
