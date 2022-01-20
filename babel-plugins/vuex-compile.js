@@ -49,10 +49,18 @@ module.exports = function transformXstateToVuex({types: t}) {
                     actionName => t.objectMethod(
                         "method",
                         t.identifier(actionName),
-                        // function example({method}){}
-                        // is just syntactic sugar for 
-                        // function example({method: method}){}
-                        [t.objectPattern([t.objectProperty(t.identifier("commit"), t.identifier("commit"))])], 
+                        [
+                            t.objectPattern(
+                                [
+                                    t.objectProperty(
+                                        t.identifier("commit"), 
+                                        t.identifier("commit"),
+                                        false,
+                                        true
+                                    )
+                                ]
+                            )
+                        ], 
                         t.blockStatement([]),
                     )
                 ));

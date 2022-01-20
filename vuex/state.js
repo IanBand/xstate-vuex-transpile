@@ -26,9 +26,7 @@ const lightMachine = {
 
   },
   actions: {
-    TIMER({
-      commit: commit
-    }) {}
+    TIMER({commit}) {}
 
   },
   getters: {}
