@@ -61,7 +61,17 @@ module.exports = function transformXstateToVuex({types: t}) {
                                 ]
                             )
                         ], 
-                        t.blockStatement([]),
+                        t.blockStatement([
+                            t.expressionStatement(
+                                t.callExpression(
+                                    t.identifier("commit"),
+                                    [
+                                        t.stringLiteral(""),
+                                        t.stringLiteral("")
+                                    ]
+                                )
+                            )
+                        ]),
                     )
                 ));
 
