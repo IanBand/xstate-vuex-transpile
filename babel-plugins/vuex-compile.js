@@ -2,7 +2,7 @@ module.exports = function transformXstateToVuex({types: t}) {
     return {
         visitor: {
             // https://babeljs.io/docs/en/babel-types - why is this so hard to find on google 
-            // https://astexplorer.net/ - SO USEFUL 
+            // https://astexplorer.net/ - super useful! hide location data and type keys, use @babel/parser
             VariableDeclaration(path, state){
                 // could check for a specific variable name
                 // console.log(path.node.declarations[0].id); 
@@ -66,8 +66,8 @@ module.exports = function transformXstateToVuex({types: t}) {
                                 t.callExpression(
                                     t.identifier("commit"),
                                     [
-                                        t.stringLiteral(""),
-                                        t.stringLiteral("")
+                                        t.stringLiteral("NEXT_STATE"),
+                                        t.stringLiteral(actionName)
                                     ]
                                 )
                             )
@@ -78,6 +78,8 @@ module.exports = function transformXstateToVuex({types: t}) {
                 // a faux xstate engine based on https://stately.ai/blog/you-dont-need-a-library-for-state-machines#using-objects
                 // TODO: just use the actual interpreter?
                 /*
+                * This expression creates the following code:
+                *
                 * NEXT_XSTATE(vuexState, action){
                 *   vuexState.curState = vuexState.stateTransitionLookup[vuexState.curState]?.on[action] ?? vuexState.curState;
                 *   TODO: apply effect based on state transition (XState calls these actions)
@@ -120,7 +122,7 @@ module.exports = function transformXstateToVuex({types: t}) {
                                             true,
                                             false
                                         ),
-                                        t.memberExpression( // same as line 78
+                                        t.memberExpression(
                                             t.identifier("vuexState"), 
                                             t.identifier("curState")
                                         ) 
@@ -131,6 +133,7 @@ module.exports = function transformXstateToVuex({types: t}) {
                     )
                 ])
 
+                // parent vuex object
                 let vuexModule = t.objectExpression(
                     [
                         t.objectProperty(
