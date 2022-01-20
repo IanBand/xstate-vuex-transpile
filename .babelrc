@@ -1,7 +1,10 @@
 {
     "plugins": [
         ["./babel-plugins/vuex-compile.js",{
-                // pass args to the custom plugin
+                /* 
+                you can pass args to a plugin in this object by writing myKey: "myValue", 
+                and access them in a visitor with state.opts.myKey
+                */
             }
         ]
     ]
